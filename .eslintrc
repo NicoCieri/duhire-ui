@@ -1,0 +1,66 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["airbnb"],
+  "env": {
+    "jest": true,
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    // NOTE: backend gives us the mongo ids, which have _id
+    "no-underscore-dangle": ["error", { "allow": ["_id", "__v"] }],
+    // This rule chokes with "isRequired" and destructuring PropTypes. It seems to be inconsistent,
+    // but unless we can figure out why it only works sometimes, we should turn it off
+    "react/no-typos": "off",
+    // Ignore our aliased modules
+    "import/no-unresolved": ["error", { "ignore": ["^@"] }],
+    // TODO: refactor our PropTypes that use "any", "object", or "array" to be more specific. There
+    // are a few issues, such as the Select, which allows the value to be "any" because it's meant
+    // to be generic, but in special cases we can disable the rule.
+    "react/forbid-prop-types": "off",
+    // TODO: the following two rules have to be turned off because our aliasing triggers them. There
+    // should be a way to ESLint how we do aliasing. We should see if we can find a good solution.
+    "import/extensions": "off",
+    "import/no-extraneous-dependencies": "off",
+    // We don't care about accessibility because we're not public-facing
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/no-autofocus": "off",
+    "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    // We want to allow warnings and errors, because they signify things like API failure
+    "no-console": ["warn", { "allow": ["warn", "error"]}],
+    // I think this is unsafe. If we use a default export in something like a file with helper
+    // functions, then want to add another one, we have to make sure we change the way we import in
+    // every file.
+    "import/prefer-default-export": "off",
+    // The description of the rule says "The use of bitwise operators in JavaScript is very rare and
+    // often & or | is simply a mistyped && or ||, which will lead to unexpected behavior.". Well a)
+    // when I program, bitwise operators aren't rare and b) it's pretty hard to confuse ^ with
+    // something, and it's hard not to catch because it sticks out like a sore thumb. Plus, ^ is an
+    // excellent tool for detecting when two things are the same. !(a ^ b) is true when two things
+    // are the same. Without ^ you'd have to do (a && b) || (!a && !b), which is  way more code.
+    "no-bitwise": ["error", { "allow": ["^"]}],
+    // TODO: I'm copying/pasting the rule from Airbnb, but removing the ForOfStatement rule because
+    // we need it for generators/iterators. Apparently Airbnb says they're bad. We should phase them
+    // out.
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "ForInStatement",
+        "message": "for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array."
+      },
+      {
+        "selector": "LabeledStatement",
+        "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+      },
+      {
+        "selector": "WithStatement",
+        "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+      }
+    ],
+    // TODO
+    "react/require-default-props": "off"
+  }
+}
